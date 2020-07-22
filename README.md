@@ -17,3 +17,34 @@ SaaS のアカウント管理には API が利用できるものも増えてい�
 
 これらの問題を解決するために、プラグイン形式でSaaS ごとにユーザの申請フォームの作成や、ユーザの追加削除処理を追加できるプラットフォームを作りたいと思った。
 
+## Installation
+
+```bash
+$ npm install
+```
+
+## Running the app
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
+```
+
+## Test
+
+```bash
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
+```
