@@ -35,9 +35,9 @@ describe('Application Controller', () => {
     userRepository.save(new User('piyo'));
     await app.init();
   });
-  it('GET /applications', () => {
+  it('GET /applications/types', () => {
     return request(app.getHttpServer())
-      .get('/applications')
+      .get('/applications/types')
       .expect(200)
       .expect({
         applications: [
@@ -88,6 +88,61 @@ describe('Application Controller', () => {
       }`,
         )
         .expect(400);
+    });
+  });
+  describe('GET /applications', () => {
+    it('200', async () => {
+      repository.applications = [];
+      await repository.save('demo', 'piyo');
+      await repository.save('demo', 'foo');
+      await repository.save('demo', 'bar');
+      await repository.save('demo', 'piyo');
+      return request(app.getHttpServer())
+        .get('/applications')
+        .set('Authorization', 'piyo')
+        .expect(200)
+        .expect([
+          {
+            id: 1,
+            type: 'demo',
+            createdBy: 'piyo',
+          },
+          {
+            id: 4,
+            type: 'demo',
+            createdBy: 'piyo',
+          },
+        ]);
+    });
+  });
+
+  describe('DELETE /applications/:id', () => {
+    it('204', async () => {
+      repository.applications = [];
+      await repository.save('demo', 'piyo');
+      await repository.save('demo', 'foo');
+      await repository.save('demo', 'bar');
+      await repository.save('demo', 'piyo');
+      const res = await request(app.getHttpServer())
+        .delete('/applications/1')
+        .set('Authorization', 'piyo')
+        .expect(204);
+      expect(repository.applications.map(i => i.id)).toEqual([2, 3, 4]);
+      return res;
+    });
+
+    it('204 not delete not own application', async () => {
+      repository.applications = [];
+      await repository.save('demo', 'piyo');
+      await repository.save('demo', 'foo');
+      await repository.save('demo', 'bar');
+      await repository.save('demo', 'piyo');
+      const res = await request(app.getHttpServer())
+        .delete('/applications/2')
+        .set('Authorization', 'piyo')
+        .expect(204);
+      expect(repository.applications.map(i => i.id)).toEqual([1, 2, 3, 4]);
+      return res;
     });
   });
 });

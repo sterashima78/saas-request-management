@@ -99,3 +99,43 @@ $ curl -X POST -H "Content-Type: application/json" \
 {"statusCode":400,"message":"Error"}
 
 ```
+
+## 申請一覧が見れる
+
+```
+$ curl -X POST -H "Content-Type: application/json" -d '{"name":"piyo"}' localhost:3000/users
+{"name":"piyo"}
+
+$ curl -X POST -H "Content-Type: application/json" -d '{"name":"hoge"}' localhost:3000/users
+{"name":"piyo"}
+
+$ curl localhost:3000/applications/types
+{"applications":[{"name":"demo"},{"name":"demo2"}]}
+
+$ curl -X POST -H "Content-Type: application/json" \
+               -H "Authorization: piyo" \
+               -d '{"name": "demo"}' \
+               localhost:3000/applications
+{"id":1,"type":"demo","createdBy":"piyo"}
+$ curl -X POST -H "Content-Type: application/json" \
+               -H "Authorization: piyo" \
+               -d '{"name": "demo2"}' \
+               localhost:3000/applications
+{"id":2,"type":"demo2","createdBy":"piyo"}
+$ curl -X POST -H "Content-Type: application/json" \
+               -H "Authorization: hoge" \
+               -d '{"name": "demo2"}' \
+               localhost:3000/applications
+{"id":3,"type":"demo2","createdBy":"hoge"}
+$ curl -X POST -H "Content-Type: application/json" \
+               -H "Authorization: hoge" \
+               -d '{"name": "demo2"}' \
+               localhost:3000/applications
+{"id":4,"type":"demo2","createdBy":"hoge"}
+$ curl -H "Authorization: piyo"  localhost:3000/applications
+[{"id":1,"type":"demo","createdBy":"piyo"},{"id":2,"type":"demo2","createdBy":"piyo"}]
+$ curl -H "Authorization: hoge"  localhost:3000/applications
+[{"id":3,"type":"demo2","createdBy":"hoge"},{"id":4,"type":"demo2","createdBy":"hoge"}]
+```
+
+## ユーザが登録されているサービスへの登録削除申請ができる

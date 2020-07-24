@@ -10,7 +10,7 @@ export class ApplicationService {
     @Inject('ApplicationRepository')
     private readonly repository: IApplicationRepository,
   ) {}
-  async getApplications(): Promise<{ name: string }[]> {
+  async getApplicationTypes(): Promise<{ name: string }[]> {
     return this.resolvePlugin();
   }
 
@@ -29,11 +29,19 @@ export class ApplicationService {
   }
 
   async findTypeByName(name: string): Promise<PluginOption | undefined> {
-    const applications = await this.getApplications();
+    const applications = await this.getApplicationTypes();
     return applications.find(a => a.name === name);
   }
 
   async create(type: string, user: string): Promise<Application> {
     return this.repository.save(type, user);
+  }
+
+  async getApplications(user = ''): Promise<Application[]> {
+    return this.repository.findByCreatedBy(user);
+  }
+
+  async deleteById(id: number, user = ''): Promise<void> {
+    this.repository.deleteById(id, user);
   }
 }
